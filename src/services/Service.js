@@ -59,7 +59,7 @@ class Service {
 
   async insert(item) {
     try {
-      // console.log(item);
+      console.log(this.model);
       const data = await this.model.create(item);
       // console.log(data);
       return {

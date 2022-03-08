@@ -1,31 +1,32 @@
 import { ExportCustomJobPage } from 'twilio/lib/rest/bulkexports/v1/export/exportCustomJob';
 import Service from './Service';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+
 
 class UserService extends Service {
-    // eslint-disable-next-line no-useless-constructor
     constructor(model) {
         super(model);
+        this.signup = this.signup.bind(this);
+        this.login = this.login.bind(this);
     }
-
-   async signup(item) {
+    async signup(item) {
         try {
-            console.log(item);
-            const data = new this.model(item)
-            data.save()
-            // const data = await this.model.create(item);
-            console.log("data saved");
+            const hash = await bcrypt.hashSync(item.password, 10);
+            item.password = hash;
+            const data = await this.model.create(item);
             return {
                 error: false,
                 statusCode: 202,
                 data: data,
             };
         } catch (err) {
-            // console.log('errors ssdsds',err);
             return {
                 error: true,
-                statusCode: 500,
-                message: 'Not able to create item'
-               , errors: err.errors,
+                statusCode: 501,
+                message: 'Error in Signup'
+                , errors: err.errors,
             };
         }
     }
@@ -33,32 +34,24 @@ class UserService extends Service {
     //login
     async login(item) {
         try {
-            // console.log(item.email);
-            const inputmail = item.email
-            const inputpass = item.password
-            let tempuser = await this.model.findOne( { "email": inputmail })
+            let tempuser = await this.model.findOne({ "email": item.email })
             if (tempuser) {
-                if (inputpass == tempuser.password) {
+                var checkPassword = await bcrypt.compareSync(item.password, tempuser.password);
+                if (checkPassword) {
+                    const token = jwt.sign({ userID: tempuser._id }, process.env.JWT_SECRET_KEY, { expiresIn: '45m'})
                     return {
                         error: false,
-                        statusCode: 202,
-                        data: tempuser,
+                        token: token,
+                        statusCode: 200,
+                        data: tempuser
                     };
                 } else {
                     return {
                         error: true,
-                        statusCode: 402,
-                        message: 'password not match'
-                        // ,errors: err.errors,
-                    };
+                        statusCode: 401,
+                        error: 'wrong Email Or Password'
+                    };;
                 }
-            } else {
-                return {
-                    error: true,
-                    statusCode: 404,
-                    message: 'user not found'
-                    // ,errors: err.errors,
-                };
             }
         } catch (error) {
             return {
@@ -70,6 +63,28 @@ class UserService extends Service {
         }
     }
 
+        //verify token
+        async jwt(token) {
+            try {
+                const decode = jwt.verify(token, process.env.JWT_SECRET_KEY );
+                console.log(decode);
+                // return {
+                //     error: true,
+                //     statusCode: 500,
+                //     message: decode
+                //     // ,errors: err.errors,
+                // };
+                let tempuser = await this.model.findOne({ "email": item.email })
+            
+            } catch (error) {
+                return {
+                    error: true,
+                    statusCode: 500,
+                    message: 'server error'
+                    // ,errors: err.errors,
+                };
+            }
+        }
 }
 
 export default UserService;

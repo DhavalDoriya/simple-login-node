@@ -15,19 +15,24 @@ class UserController extends Controller {
   }
   
   async signup(req, res) {
-    console.log(req.body);
     const response = await this.service.signup(req.body);
     if (response.error) return res.status(response.statusCode).send(response);
     return res.status(response.statusCode).send(response);
-    // return res.send('panding')
   }
+
   async login(req, res) {
-    // console.log(req.body);
     const response = await this.service.login(req.body);
     if (response.error) return res.status(response.statusCode).send(response);
     return res.status(response.statusCode).send(response);
-    // return res.send('panding')
   }
+
+
+  // async jwt(req, res) {
+  //   const response = await this.service.jwt(req.header.authtoken);
+  //   if (response.error) return res.status(response.statusCode).send(response);
+  //   return res.status(response.statusCode).send(response);
+  // }
+
 
 }
 
