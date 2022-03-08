@@ -26,7 +26,7 @@ class UserController extends Controller {
     return res.status(response.statusCode).send(response);
   }
 
-  //test
+  //test  d
   // async jwt(req, res) {
   //   const response = await this.service.jwt(req.header.authtoken);
   //   if (response.error) return res.status(response.statusCode).send(response);
