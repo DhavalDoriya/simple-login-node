@@ -28,25 +28,24 @@ class socialuserController extends Controller {
   //follow unfollow user
   async follow(req, res) {
     const data = {
-      id:req.params.id,
-      userid:req.body.userID
+      id: req.params.id,
+      body: req.body
     }
-  const response = await this.service.follow(data);
-  if (response.error) return res.status(response.statusCode).send(response);
-  return res.status(response.statusCode).send(response);
-}
-
-async unfollow(req, res) {
-  const data = {
-    id:req.params.id,
-    userid:req.body.userID
+    const response = await this.service.follow(data);
+    if (response.error) return res.status(response.statusCode).send(response);
+    return res.status(response.statusCode).send(response);
   }
-const response = await this.service.unfollow(data);
-if (response.error) return res.status(response.statusCode).send(response);
-return res.status(response.statusCode).send(response);
-}
+
+  async unfollow(req, res) {
+    const data = {
+      id: req.params.id,
+      body: req.body
+    }
+    const response = await this.service.unfollow(data);
+    if (response.error) return res.status(response.statusCode).send(response);
+    return res.status(response.statusCode).send(response);
+  }
 
 }
 
 export default new socialuserController(userService);
- 

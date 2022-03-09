@@ -74,18 +74,19 @@ class socialuserserService extends Service {
         }
     }
     //follow unfollow code
-    async follow(data){
-        if (data.userid !== data.id) {
+   
+    async follow(data) {
+        if (data.body.userId !== data.id) {
             try {
                 const user = await this.model.findById(data.id);
-                const currentUser = await this.model.findById(data.userid);
-                if (!user.followers.includes(data.userid)) {
-                    await user.updateOne({ $push: { followers: data.userid} });
+                const currentUser = await this.model.findById(data.body.userId);
+                if (!user.followers.includes(data.body.userId)) {
+                    await user.updateOne({ $push: { followers: data.body.userId } });
                     await currentUser.updateOne({ $push: { followings: data.id } });
                     return {
                         error: false,
                         statusCode: 200,
-                        error: 'user has been followed '
+                        error: ' user has been followed '
                     };
                 } else {
                     return {
@@ -109,20 +110,22 @@ class socialuserserService extends Service {
             };
         }
     }
-     //follow unfollow code
-     async unfollow(data) {
-         console.log(data.userid );
-        if (data.userid !== data.id) {
+
+
+    // unfollow
+
+    async unfollow(data) {
+        if (data.body.userId !== data.id) {
             try {
                 const user = await this.model.findById(data.id);
-                const currentUser = await this.model.findById(data.userid);
-                if (!user.followers.includes(data.userid)) {
-                    await user.updateOne({ $pull: { followers: data.userid} });
+                const currentUser = await this.model.findById(data.body.userId);
+                if (!user.followers.includes(data.body.userId)) {
+                    await user.updateOne({ $pull: { followers: data.body.userId } });
                     await currentUser.updateOne({ $pull: { followings: data.id } });
                     return {
                         error: false,
                         statusCode: 200,
-                        error: 'user has been unfollowed '
+                        error: ' user has been unfollowed '
                     };
                 } else {
                     return {
@@ -147,6 +150,7 @@ class socialuserserService extends Service {
         }
     }
     
+
 
 }
 
