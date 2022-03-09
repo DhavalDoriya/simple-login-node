@@ -11,12 +11,19 @@ class UserService extends Service {
         super(model);
         this.signup = this.signup.bind(this);
         this.login = this.login.bind(this);
+
+        //email otp token methods
         this.changepassword = this.changepassword.bind(this);
         this.sendEmail = this.sendEmail.bind(this);
         this.resetPassword = this.resetPassword.bind(this);
         this.jwt = this.jwt.bind(this);
 
+        //follow unfollow user methods
+        this.follow = this.follow.bind(this);
+        this.unfollow = this.unfollow.bind(this);
+
     }
+    //signup
     async signup(item) {
         try {
             const hash = await bcrypt.hashSync(item.password, 10);
@@ -36,7 +43,6 @@ class UserService extends Service {
             };
         }
     }
-
     //login
     async login(item) {
         try {
@@ -75,7 +81,6 @@ class UserService extends Service {
             };
         }
     }
-
     //reset password by token
     async changepassword(data) {
         try {
@@ -195,7 +200,6 @@ class UserService extends Service {
                         password: newhashPassword,
                         UserData: "Password Reset Successfull..."
                     };
-
                 }
             } else {
                 return {
@@ -244,7 +248,8 @@ class UserService extends Service {
         if (email) {
             const user = await this.model.findOne({ email: email })
             if (user) {
-                var otp = otpGenerator.generate(6, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
+                var otp = otpGenerator.generate(6, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false },{expiresIn:"1m"});
+                console.log(otp);
                 const saveotp = await this.model.findByIdAndUpdate(user._id, {
                     $set: {
                         otp: otp
@@ -255,7 +260,7 @@ class UserService extends Service {
                         from: process.env.EMAIL_FROM,
                         to: user.email,
                         subject: "Password Reset Otp",
-                        html: `<h1>Otp : ${otp}</h1> <h2>to Reset Your Password</h2>`
+                        html: `<h1>OTP : ${otp}</h1> <h2>to Reset Your Password</h2>`
                     })
                     return {
                         error: false,
@@ -276,7 +281,6 @@ class UserService extends Service {
                     statusCode: 404,
                     UserData: "invalid email"
                 };
-
             }
         }
         else {
@@ -295,8 +299,7 @@ class UserService extends Service {
         if (password && cpassword && otp) {
             const useremail = await this.model.findOne({ email: email })
             if (useremail) {
-                const user = await this.model.findOne({ otp: otp })
-                if (otp) {
+                if (otp == useremail.otp) {
                     if (password !== cpassword) {
                         return {
                             error: false,
@@ -321,14 +324,14 @@ class UserService extends Service {
                     return {
                         error: true,
                         statusCode: 401,
-                        UserData: "invalid otp"
+                        UserData: "Invalid Otp"
                     };
                 }
             } else {
                 return {
                     error: true,
                     statusCode: 401,
-                    UserData: "invalid email"
+                    UserData: "Invalid email"
                 };
             }
         } else {
@@ -339,6 +342,24 @@ class UserService extends Service {
             };
 
         }
+
+    }
+
+    async follow(data){
+        return {
+            error: false,
+            statusCode: 201,
+            msg: "follow"
+        };
+        
+    }
+    async unfollow(data){
+        return {
+            error: false,
+            statusCode: 201,
+            msg: "unfollow"
+        };
+
 
     }
 }

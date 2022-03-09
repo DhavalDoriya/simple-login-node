@@ -3,15 +3,20 @@ import Controller from '../controllers/UserController';
 export default (router) => {
     router.post(`/api/user/login`, Controller.login);
     router.post(`/api/user/signup`, Controller.signup);
-    // router.get(`/api/user/verify`, Controller.jwt);
     router.post(`/api/user/changePassword`, Controller.changepassword);
+
+    //otp token routes
     router.post(`/api/user/sendEmail`, Controller.sendEmail);
-    // router.post(`/api/user/resetPassword/:id/:token`, Controller.resetPassword);
     router.post(`/api/user/resetPassword/:token`, Controller.resetPassword);
 
     //otp routes
     router.post(`/api/user/sendemailotp`, Controller.sendEmailotp);
     router.post(`/api/user/resetpasswordotp`, Controller.resetPasswordotp);
+
+    //follow/unfollow user
+    router.post(`/api/Socialuser/:id/follow`, Controller.follow);
+    router.post(`/api/Socialuser/:id/unfollow`, Controller.unfollow);
+
 
 
 

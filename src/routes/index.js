@@ -1,23 +1,15 @@
-/* import express from 'express';
 
-const router = express.Router();
-
-
-router.get('/', (req, res) => {
-  res.render('index', { title: 'Express' });
-});
-
-export default router; */
 import express from 'express';
-import postRoute from './postRoute';
+// import postRoute from './postRoute';
 import userRoute from './userRoute';
+import socialuserRoute from './socialuserRoute';
 
 
 
 const router = express.Router();
 
 
-postRoute(router);
+socialuserRoute(router);
 userRoute(router);
 
 export default router;
