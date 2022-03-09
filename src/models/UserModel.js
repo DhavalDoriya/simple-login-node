@@ -11,13 +11,17 @@ class UserModel {
           default: null,
         },
         email: {
-            type: String,
-            default: null,
-          },
+          type: String,
+          default: null,
+        },
         password: {
           type: String,
           required: true
+        },
+        otp: {
+          type: String
         }
+      
       },
       {
         timestamps: true,

@@ -1,8 +1,6 @@
-
 import Controller from './Controller';
 import User from '../models/UserModel';
 import UserService from '../services/UserService';
-
 
 const userService = new UserService(new User().getInstance());
 
@@ -11,7 +9,15 @@ class UserController extends Controller {
     super(service);
     this.signup = this.signup.bind(this);
     this.login = this.login.bind(this);
+    // this.jwt = this.jwt.bind(this);
+    this.changepassword = this.changepassword.bind(this);
+    //reset password by email token
+    this.sendEmail = this.sendEmail.bind(this);
+    this.resetPassword = this.resetPassword.bind(this);
     // this.signupp = this.signupp.bind(this);
+        //reset password by email otp
+    this.sendEmailotp = this.sendEmailotp.bind(this);
+    this.resetPasswordotp = this.resetPasswordotp.bind(this);
   }
   
   async signup(req, res) {
@@ -19,21 +25,73 @@ class UserController extends Controller {
     if (response.error) return res.status(response.statusCode).send(response);
     return res.status(response.statusCode).send(response);
   }
-
   async login(req, res) {
     const response = await this.service.login(req.body);
     if (response.error) return res.status(response.statusCode).send(response);
     return res.status(response.statusCode).send(response);
   }
 
-  //test  d
-  // async jwt(req, res) {
-  //   const response = await this.service.jwt(req.header.authtoken);
-  //   if (response.error) return res.status(response.statusCode).send(response);
-  //   return res.status(response.statusCode).send(response);
-  // }
+  async jwt(req, res) {
+    console.log('req.header.authtoken');
+    const response = await this.service.login(req.headers.authtoken);
+    if (response.error) return res.status(response.statusCode).send(response);
+    return res.status(response.statusCode).send(response);
+  }
 
+  async changepassword(req, res) {
+    const data = {
+      params : req.headers.authtoken,
+      body: req.body
+    }
+    const response = await this.service.changepassword(data);
+    if (response.error) return res.status(response.statusCode).send(response);
+    return res.status(response.statusCode).send(response);
+  }
+
+  async sendEmail(req, res) {
+    const data = {
+      params : req.headers.authtoken,
+      body: req.body
+    }
+    const response = await this.service.sendEmail(data);
+    if (response.error) return res.status(response.statusCode).send(response);
+    return res.status(response.statusCode).send(response);
+  }
+  async resetPassword(req, res) {
+    const data = {
+      password : req.body.password,
+      cpassword : req.body.cpassword,
+      // id : req.params.id,
+      token : req.params.token
+    }
+    const response = await this.service.resetPassword(data);
+    if (response.error) return res.status(response.statusCode).send(response);
+    return res.status(response.statusCode).send(response);
+  }
+
+
+  //otp email code
+  async sendEmailotp(req, res) {
+    const data = {
+      params : req.headers.authtoken,
+      body: req.body
+    }
+
+    const response = await this.service.sendEmailotp(data);
+    if (response.error) return res.status(response.statusCode).send(response);
+    return res.status(response.statusCode).send(response);
+  }
+  async resetPasswordotp(req, res) {
+    const data = {
+      params : req.headers.authtoken,
+      body: req.body
+    }
+    const response = await this.service.resetPasswordotp(data);
+    if (response.error) return res.status(response.statusCode).send(response);
+    return res.status(response.statusCode).send(response);
+  }
 
 }
 
 export default new UserController(userService);
+ 
